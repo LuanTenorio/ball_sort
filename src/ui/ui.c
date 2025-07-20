@@ -1,18 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
-    #define CLEAR_SCREEN_CMD "cls"
-#else
-    #define CLEAR_SCREEN_CMD "clear"
-#endif
+#include "../config.h"
 
-void clear_screen(){
+void clearScreen(){
     system(CLEAR_SCREEN_CMD);
 }
 
-void show_welcome(char *nickname){
-    clear_screen();
+void showWelcome(char *nickname){
+    clearScreen();
     printf("========================================\n");
     printf("     Bem-vindo(a) ao Jogo Ordemoji!  \n");
     printf("========================================\n\n");
@@ -21,20 +17,27 @@ void show_welcome(char *nickname){
     scanf("%20s", nickname);
 }
 
-void enter_option(char *n){
+void enterOption(char *n){
     printf("Escolha uma opção: ");
     scanf("%c", n);
+    clearScreen();
 }
 
-void show_panel(){
+void pressEnterToContinue(){
+    printf("Pressione Enter para continuar...");
+    while(getchar() != '\n');
+    getchar();
+    clearScreen();
+}
+
+void showPanel(){
     printf("========================================\n");
     printf("                 Ordemoji               \n");
     printf("========================================\n");
 }
 
-void show_menu(char *option){
-    clear_screen();
-    show_panel();
+void showMenu(char *option){
+    showPanel();
 
     printf("1. Jogar\n");
     printf("2. Configuracoes\n");
@@ -42,6 +45,17 @@ void show_menu(char *option){
     printf("4. Ranking\n");
     printf("5. Sair\n\n");
 
-    enter_option(option);
+    enterOption(option);
     option[0] -= '0';
+}
+
+void showMap(char map[MAP_SIZE][MAP_SIZE]) {
+    clearScreen();
+    for (int i = 0; i < MAP_SIZE; i++) {
+        for (int j = 0; j < MAP_SIZE; j++) {
+            printf("%c ", map[i][j]);
+        }
+        
+        printf("\n");
+    }
 }

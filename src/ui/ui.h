@@ -1,5 +1,14 @@
-void clear_screen();
-void show_welcome(char *nickname);
-void enter_option(char *n);
-void show_panel();
-void show_menu(char *option);
+#ifndef UI_H
+#define UI_H
+
+    #include "../config.h"
+
+    void clearScreen();
+    void showWelcome(char *nickname);
+    void enterOption(char *n);
+    void showPanel();
+    void showMenu(char *option);
+    void showMap(char map[MAP_SIZE][MAP_SIZE]);
+    void pressEnterToContinue();
+
+#endif 
