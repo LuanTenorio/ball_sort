@@ -1,5 +1,0 @@
-#define MENU_JOGAR 1
-#define MENU_CONFIGURACOES 2
-#define MENU_INSTRUCOES 3
-#define MENU_RANKING 4
-#define MENU_SAIR 5
