@@ -20,7 +20,7 @@ void showWelcome(char *nickname){
 
 void enterOption(char *n){
     printf("Escolha uma opção: ");
-    scanf("%c", n);
+    scanf(" %c", n);
     clearScreen();
 }
 
@@ -63,5 +63,11 @@ void showMap(char map[MAP_SIZE][MAP_SIZE]) {
         printf("\n");
     }
 
-    printf("\n");
+    printf(" -   -   -   -   -   -   -   -   -   -\n");
+
+    for(int i = 0; i < MAP_SIZE; i++) {
+        printf(" %d |", i);
+    }
+
+    printf("\n\n");
 }
