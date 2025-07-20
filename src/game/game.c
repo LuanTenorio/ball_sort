@@ -16,22 +16,24 @@ void convertMapToArray(char map[MAP_SIZE][MAP_SIZE]) {
     char c[2];
     int lenColumn = 0;
     int curLine = 0;
-
+    int floor = 0;
+    
     while(fgets(c, 2, file)){
         if(c[0] == '\n') continue;
 
         // Preenche o mapa
         if(lenColumn--){
-            map[curLine][lenColumn] = c[0];
+            map[curLine][lenColumn + floor] = c[0];
             continue;
         }
 
         // Verifica as linhas e colunas
-        int numberOfColumns = c[0] - '0';
-        int isNumber = numberOfColumns >= 0 && numberOfColumns <= 9;
+        int numberOfLines = c[0] - '0';
+        int isNumber = numberOfLines >= 0 && numberOfLines <= 9;
+        floor = MAP_SIZE - numberOfLines;
 
         if(isNumber){
-            lenColumn = numberOfColumns;
+            lenColumn = numberOfLines;
             curLine++;
         }else{
             printf("Arquivo está em um formato inválido.\n");
