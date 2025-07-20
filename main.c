@@ -1,13 +1,16 @@
-#include "./src/ui/ui.h"
-#include "./src/config.c"
 #include <stdio.h>
 
-void loop_game() {
+#include "./src/ui/ui.h"
+#include "./src/config.h"
+#include "./src/game/game.h"
+
+void loopGame() {
     char option;
     while(option != MENU_SAIR) {
-        show_menu(&option);
+        showMenu(&option);
         switch (option){
             case MENU_JOGAR:
+                startGame();
                 break;
             case MENU_CONFIGURACOES:
                 break;
@@ -21,7 +24,7 @@ void loop_game() {
 
 int main(){
     char nickname[21]; // Não faz nada ainda
-    show_welcome(nickname);
-    loop_game();
+    showWelcome(nickname);
+    loopGame();
     return 0;
 }
