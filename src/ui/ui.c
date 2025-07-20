@@ -3,6 +3,7 @@
 
 #include "../config.h"
 
+// Sempre chamar ao printar ao novo na tela e nunca depois de finalizar uma operação
 void clearScreen(){
     system(CLEAR_SCREEN_CMD);
 }
@@ -27,7 +28,6 @@ void pressEnterToContinue(){
     printf("Pressione Enter para continuar...");
     while(getchar() != '\n');
     getchar();
-    clearScreen();
 }
 
 void showPanel(){
@@ -37,6 +37,7 @@ void showPanel(){
 }
 
 void showMenu(char *option){
+    clearScreen();
     showPanel();
 
     printf("1. Jogar\n");
@@ -51,11 +52,16 @@ void showMenu(char *option){
 
 void showMap(char map[MAP_SIZE][MAP_SIZE]) {
     clearScreen();
-    for (int i = 0; i < MAP_SIZE; i++) {
-        for (int j = 0; j < MAP_SIZE; j++) {
-            printf("%c ", map[i][j]);
+    printf("\n\n");
+
+    for (int line = 0; line < MAP_SIZE; line++) {
+        for (int col = 0; col < MAP_SIZE; col++) {
+            char character = map[col][line];
+            printf(" %c |", character == '\0' ? ' ' : character);
         }
         
         printf("\n");
     }
+
+    printf("\n");
 }
