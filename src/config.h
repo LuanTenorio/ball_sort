@@ -22,19 +22,18 @@
 
 // GAME
 
-    // tamanho do mapa
-    #define MAP_SIZE 10
-
     typedef struct Collumn{
-        char mojis[MAP_SIZE];
+        char *mojis;
         int len;
         bool complete;
     } Collumn;
 
     typedef struct Map{
-        Collumn collumns[MAP_SIZE];
+        Collumn *collumns;
         int input;
         int output;
+        int maxHeight;
+        int lenCollumns;
     } Map;
 
 #endif

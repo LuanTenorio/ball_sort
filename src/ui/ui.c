@@ -51,9 +51,9 @@ void showMenu(char *option){
 }
 
 void debuggerShowMap(Map *map){
-    for(int i = 0; i < MAP_SIZE; i++){
+    for(int i = 0; i < map->lenCollumns; i++){
         printf("Coluna %d: ", i);
-        for(int j = 0; j < MAP_SIZE; j++){
+        for(int j = 0; j < map->maxHeight; j++){
             int character = map->collumns[i].mojis[j];
             printf(" %c", character == '\0' ? ' ' : character);
         }
@@ -64,7 +64,7 @@ void debuggerShowMap(Map *map){
 void showColumn(int column, Map *map) {
     printf("Coluna %d: ", column);
 
-    for(int i = 0; i < MAP_SIZE; i++) {
+    for(int i = 0; i < map->maxHeight; i++) {
         char character = map->collumns[column].mojis[i];
         printf(" %c", character == '\0' ? ' ' : character);
     }
@@ -76,8 +76,8 @@ void showMap(Map *map) {
     clearScreen();
     printf("\n\n");
 
-    for (int line = 0; line < MAP_SIZE; line++) {
-        for (int col = 0; col < MAP_SIZE; col++) {
+    for (int line = 0; line < map->maxHeight; line++) {
+        for (int col = 0; col < map->lenCollumns; col++) {
             char character = map->collumns[col].mojis[line];
             printf(" %c |", character == '\0' ? ' ' : character);
         }
@@ -85,11 +85,13 @@ void showMap(Map *map) {
         printf("\n");
     }
 
-    printf(" -   -   -   -   -   -   -   -   -   -\n");
+    for(int i = 0; i < map->lenCollumns; i++) 
+        printf(" -  ");
+    
+    printf("\n");
 
-    for(int i = 0; i < MAP_SIZE; i++) {
+    for(int i = 0; i < map->lenCollumns; i++) 
         printf(" %d |", i);
-    }
 
     printf("\n\n");
 }
