@@ -16,7 +16,7 @@ void convertMapToArray(Map *map) {
     FILE *file = fopen("entrada.txt", "r");
     char c[2];
     int lenColumn = 0;
-    int curCollum = -1;
+    int curColumn = -1;
     int floor = 0;
     
     while(fgets(c, 2, file)){
@@ -24,7 +24,7 @@ void convertMapToArray(Map *map) {
 
         // Preenche o mapa
         if(lenColumn--){
-            map->collumns[curCollum].mojis[lenColumn + floor] = c[0];
+            map->collumns[curColumn].mojis[lenColumn + floor] = c[0];
             continue;
         }
 
@@ -36,15 +36,15 @@ void convertMapToArray(Map *map) {
         // Seleciona a quantidade de colunas
         if(isNumber){
             lenColumn = numberOfLines;
-            curCollum++;
+            curColumn++;
         }else{
             printf("Arquivo está em um formato inválido.\n");
             exit(1);
         }
         
         // Coloca o valor inicial da coluna
-        map->collumns[curCollum].len = numberOfLines;
-        map->collumns[curCollum].complete = 0;
+        map->collumns[curColumn].len = numberOfLines;
+        map->collumns[curColumn].complete = 0;
     }
 
     fclose(file);
@@ -84,6 +84,63 @@ bool play(int *input, int *output) {
     return 1;
 }
 
+void removeMojisFromInputColumn(Map *map, int *lenMojis, char selectedMoji) {
+    for (int i = MAP_SIZE - map->collumns[map->input].len; i < MAP_SIZE; i++){
+        // Se o moji for diferente do selecionado, sai do for
+        if(map->collumns[map->input].mojis[i] != selectedMoji) break;
+
+        // Limpa o moji selecionado
+        map->collumns[map->input].mojis[i] = '\0';
+        (*lenMojis)++;
+    }
+}
+
+void putMojisInOutputColumn(Map *map, int lenMojis, char selectedMoji) {
+    int floor = MAP_SIZE - map->collumns[map->output].len - 1; // Posição do primeiro espaço em branco na coluna de saida
+
+    while(lenMojis--){
+        map->collumns[map->output].mojis[floor-lenMojis] = selectedMoji; // Coloca o moji selecionado na coluna de saida
+    }
+}
+
+bool isValidSwap(Map *map, int lenMojis) {
+    //Verificar logica mais pra frente
+    if(lenMojis + map->collumns[map->output].len > MAP_SIZE) {
+        printf("A troca de %d moji(s) de %d para %d não é possível, pois excede o tamanho da coluna.\n", lenMojis, map->input, map->output);
+        return 0;
+    }
+
+    if(lenMojis == 0) {
+        printf("Nenhum moji selecionado para troca.\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+void swapMojis(Map *map) {
+    int lenMojis = 0;
+    char selectedMoji = map->collumns[map->input].mojis[MAP_SIZE - map->collumns[map->input].len]; // Moji selecionado para troca
+    char rollbackColumnInput[MAP_SIZE] = {0}; // Armazena o estado da coluna de entrada antes da troca
+
+    strcpy(rollbackColumnInput, map->collumns[map->input].mojis); // Restaura o estado da coluna de entrada
+    removeMojisFromInputColumn(map, &lenMojis, selectedMoji);
+        
+    // Verifica se a troca é válida
+    if(!isValidSwap(map, lenMojis)) {
+        strcpy(map->collumns[map->input].mojis, rollbackColumnInput); // Restaura o estado da coluna de entrada
+        pressEnterToContinue();
+        return;
+    }
+
+    // Coloca os mojis selecionados na coluna de output
+    putMojisInOutputColumn(map, lenMojis, selectedMoji);
+    
+    // Atualiza o tamanho das colunas
+    map->collumns[map->output].len += lenMojis;
+    map->collumns[map->input].len -= lenMojis;
+}
+
 void startGame(){
     Map map = {0};
 
@@ -94,7 +151,7 @@ void startGame(){
 
         if(!play(&map.input, &map.output)) continue; // Se a jogada for invalida, joga denovo
 
-        pressEnterToContinue();
+        swapMojis(&map);
     }
 
 }

@@ -11,5 +11,6 @@
     void showMap(Map *map);
     void pressEnterToContinue();
     void debuggerShowMap(Map *map);
+    void showColumn(int column, Map *map);
 
 #endif 

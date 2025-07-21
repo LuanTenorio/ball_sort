@@ -61,6 +61,17 @@ void debuggerShowMap(Map *map){
     }
 }
 
+void showColumn(int column, Map *map) {
+    printf("Coluna %d: ", column);
+
+    for(int i = 0; i < MAP_SIZE; i++) {
+        char character = map->collumns[column].mojis[i];
+        printf(" %c", character == '\0' ? ' ' : character);
+    }
+    
+    printf("\n");
+}
+
 void showMap(Map *map) {
     clearScreen();
     printf("\n\n");
