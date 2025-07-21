@@ -177,6 +177,29 @@ bool isValidSwap(Map *map, int lenMojis) {
     return true;
 }
 
+bool checkColumnCompletion(Map *map, int column) {
+    char moji = map->collumns[map->output].mojis[0];
+
+    if (moji == '\0' || map->collumns[map->output].len != map->maxHeight) {
+        return false;
+    }
+
+    bool diffMoji = false;
+
+    for(int i = 0; i < map->maxHeight; i++) {
+        if(map->collumns[map->output].mojis[i] != moji) {
+            diffMoji = true;
+            break;
+        }
+    }
+
+    if(!diffMoji){
+        printf("PARABENS, VOCE FECHOU A COLUNA %d\n", map->output);
+        map->collumns[map->output].complete = true;
+        pressEnterToContinue();
+    }
+}
+
 void swapMojis(Map *map) {
     char selectedMoji = map->collumns[map->input].mojis[map->maxHeight - map->collumns[map->input].len]; // Moji selecionado para troca
     int lenMojis = getLenMojisFromInputColumn(map, selectedMoji);
@@ -193,6 +216,7 @@ void swapMojis(Map *map) {
 }
 
 void startGame(){
+    int interactions = 0;
     Map map = {0};
     
     getMapSize(&map);
@@ -201,9 +225,13 @@ void startGame(){
     
     while(1){
         showMap(&map);
+        if(interactions != 0) {
+            checkColumnCompletion(&map, map.output);
+        }
 
         if(!play(&map)) continue; // Se a jogada for invalida, joga denovo
 
+        interactions++;
         swapMojis(&map);
     }
 
