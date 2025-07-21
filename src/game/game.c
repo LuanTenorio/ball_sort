@@ -30,6 +30,15 @@ void getMapSize(Map *map) {
     fclose(file);
 }
 
+void freeMap(Map *map) {
+    for(int i = 0; i < map->lenCollumns; i++) {
+        free(map->collumns[i].mojis);
+    }
+
+    free(map->collumns);
+    map->collumns = NULL;
+}
+
 void convertMapToArray(Map *map) {
     if(access("entrada.txt", F_OK)) {
         printf("Arquivo de entrada não encontrado.\n");
@@ -198,4 +207,5 @@ void startGame(){
         swapMojis(&map);
     }
 
+    freeMap(&map);
 }
