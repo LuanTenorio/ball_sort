@@ -50,13 +50,13 @@ void showMenu(char *option){
     option[0] -= '0';
 }
 
-void showMap(char map[MAP_SIZE][MAP_SIZE]) {
+void showMap(Map *map) {
     clearScreen();
     printf("\n\n");
 
     for (int line = 0; line < MAP_SIZE; line++) {
         for (int col = 0; col < MAP_SIZE; col++) {
-            char character = map[col][line];
+            char character = map->collumns[col].mojis[line];
             printf(" %c |", character == '\0' ? ' ' : character);
         }
         

@@ -8,7 +8,7 @@
     void enterOption(char *n);
     void showPanel();
     void showMenu(char *option);
-    void showMap(char map[MAP_SIZE][MAP_SIZE]);
+    void showMap(Map *map);
     void pressEnterToContinue();
 
 #endif 

@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../ui/ui.h"
 #include "../config.h"
 
-void convertMapToArray(char map[MAP_SIZE][MAP_SIZE]) {
+void convertMapToArray(Map *map) {
     if(access("entrada.txt", F_OK)) {
         printf("Arquivo de entrada não encontrado.\n");
         exit(1);
@@ -23,7 +24,7 @@ void convertMapToArray(char map[MAP_SIZE][MAP_SIZE]) {
 
         // Preenche o mapa
         if(lenColumn--){
-            map[curLine][lenColumn + floor] = c[0];
+            map->collumns[curLine].mojis[lenColumn + floor] = c[0];
             continue;
         }
 
@@ -31,6 +32,8 @@ void convertMapToArray(char map[MAP_SIZE][MAP_SIZE]) {
         int numberOfLines = c[0] - '0';
         int isNumber = numberOfLines >= 0 && numberOfLines < MAP_SIZE;
         floor = MAP_SIZE - numberOfLines;
+        map->collumns[curLine].len = numberOfLines;
+        map->collumns[curLine].complete = 0;
 
         if(isNumber){
             lenColumn = numberOfLines;
@@ -45,7 +48,7 @@ void convertMapToArray(char map[MAP_SIZE][MAP_SIZE]) {
 }
 
 // Melhorar tratamento de erros
-int play(int *input, int *output) {
+bool play(int *input, int *output) {
     printf("Informe a coluna de origem (0-%d): ", MAP_SIZE - 1);
 
     char inputChar, outputChar;
@@ -79,13 +82,13 @@ int play(int *input, int *output) {
 }
 
 void startGame(){
-    char map[MAP_SIZE][MAP_SIZE] = {0};
+    Map map = {0};
     int input, output;
 
-    convertMapToArray(map);
+    convertMapToArray(&map);
 
     while(1){
-        showMap(map);
+        showMap(&map);
 
         if(!play(&input, &output)) continue; // Se a jogada for invalida, joga denovo
     }

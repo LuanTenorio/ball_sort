@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
     #define CONFIG_H
 
+    typedef enum { false, true } bool;
+
 // UI
 
     // Menu
@@ -22,5 +24,17 @@
 
     // tamanho do mapa
     #define MAP_SIZE 10
+
+    typedef struct Collumn{
+        char mojis[MAP_SIZE];
+        int len;
+        bool complete;
+    } Collumn;
+
+    typedef struct Map{
+        Collumn collumns[MAP_SIZE];
+        int input;
+        int output;
+    } Map;
 
 #endif
