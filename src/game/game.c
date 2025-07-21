@@ -91,25 +91,38 @@ void removeMojisFromInputColumn(Map *map, int *lenMojis, char selectedMoji) {
 
         // Limpa o moji selecionado
         map->collumns[map->input].mojis[i] = '\0';
-        (*lenMojis)++;
     }
+
+    map->collumns[map->input].len -= *lenMojis;
+}
+
+int getLenMojisFromInputColumn(Map *map, char selectedMoji) {
+    int lenMojis = 0;
+    for (int i = MAP_SIZE - map->collumns[map->input].len; i < MAP_SIZE; i++){
+        if(map->collumns[map->input].mojis[i] != selectedMoji) break;
+        
+        lenMojis++;
+    }
+
+    return lenMojis;
 }
 
 void putMojisInOutputColumn(Map *map, int lenMojis, char selectedMoji) {
     int floor = MAP_SIZE - map->collumns[map->output].len - 1; // Posição do primeiro espaço em branco na coluna de saida
+    map->collumns[map->output].len += lenMojis;
 
-    while(lenMojis--){
+    while(lenMojis--)
         map->collumns[map->output].mojis[floor-lenMojis] = selectedMoji; // Coloca o moji selecionado na coluna de saida
-    }
 }
 
 bool isValidSwap(Map *map, int lenMojis) {
-    //Verificar logica mais pra frente
+    //Verifica se a coluna tem espaco suficiente para receber os mojis
     if(lenMojis + map->collumns[map->output].len > MAP_SIZE) {
         printf("A troca de %d moji(s) de %d para %d não é possível, pois excede o tamanho da coluna.\n", lenMojis, map->input, map->output);
         return 0;
     }
 
+    // Verifica se tem algum elemento na coluna de input
     if(lenMojis == 0) {
         printf("Nenhum moji selecionado para troca.\n");
         return 0;
@@ -119,26 +132,18 @@ bool isValidSwap(Map *map, int lenMojis) {
 }
 
 void swapMojis(Map *map) {
-    int lenMojis = 0;
     char selectedMoji = map->collumns[map->input].mojis[MAP_SIZE - map->collumns[map->input].len]; // Moji selecionado para troca
-    char rollbackColumnInput[MAP_SIZE] = {0}; // Armazena o estado da coluna de entrada antes da troca
-
-    strcpy(rollbackColumnInput, map->collumns[map->input].mojis); // Restaura o estado da coluna de entrada
-    removeMojisFromInputColumn(map, &lenMojis, selectedMoji);
-        
+    int lenMojis = getLenMojisFromInputColumn(map, selectedMoji);
+    
     // Verifica se a troca é válida
     if(!isValidSwap(map, lenMojis)) {
-        strcpy(map->collumns[map->input].mojis, rollbackColumnInput); // Restaura o estado da coluna de entrada
         pressEnterToContinue();
         return;
     }
-
-    // Coloca os mojis selecionados na coluna de output
-    putMojisInOutputColumn(map, lenMojis, selectedMoji);
     
-    // Atualiza o tamanho das colunas
-    map->collumns[map->output].len += lenMojis;
-    map->collumns[map->input].len -= lenMojis;
+    // Coloca os mojis selecionados na coluna de output
+    removeMojisFromInputColumn(map, &lenMojis, selectedMoji);
+    putMojisInOutputColumn(map, lenMojis, selectedMoji);
 }
 
 void startGame(){
