@@ -16,7 +16,7 @@ void convertMapToArray(Map *map) {
     FILE *file = fopen("entrada.txt", "r");
     char c[2];
     int lenColumn = 0;
-    int curLine = 0;
+    int curCollum = -1;
     int floor = 0;
     
     while(fgets(c, 2, file)){
@@ -24,7 +24,7 @@ void convertMapToArray(Map *map) {
 
         // Preenche o mapa
         if(lenColumn--){
-            map->collumns[curLine].mojis[lenColumn + floor] = c[0];
+            map->collumns[curCollum].mojis[lenColumn + floor] = c[0];
             continue;
         }
 
@@ -32,16 +32,19 @@ void convertMapToArray(Map *map) {
         int numberOfLines = c[0] - '0';
         int isNumber = numberOfLines >= 0 && numberOfLines < MAP_SIZE;
         floor = MAP_SIZE - numberOfLines;
-        map->collumns[curLine].len = numberOfLines;
-        map->collumns[curLine].complete = 0;
-
+        
+        // Seleciona a quantidade de colunas
         if(isNumber){
             lenColumn = numberOfLines;
-            curLine++;
+            curCollum++;
         }else{
             printf("Arquivo está em um formato inválido.\n");
             exit(1);
         }
+        
+        // Coloca o valor inicial da coluna
+        map->collumns[curCollum].len = numberOfLines;
+        map->collumns[curCollum].complete = 0;
     }
 
     fclose(file);
@@ -83,14 +86,15 @@ bool play(int *input, int *output) {
 
 void startGame(){
     Map map = {0};
-    int input, output;
 
     convertMapToArray(&map);
-
+    
     while(1){
         showMap(&map);
 
-        if(!play(&input, &output)) continue; // Se a jogada for invalida, joga denovo
+        if(!play(&map.input, &map.output)) continue; // Se a jogada for invalida, joga denovo
+
+        pressEnterToContinue();
     }
 
 }
