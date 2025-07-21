@@ -10,5 +10,6 @@
     void showMenu(char *option);
     void showMap(Map *map);
     void pressEnterToContinue();
+    void debuggerShowMap(Map *map);
 
 #endif 

@@ -50,6 +50,17 @@ void showMenu(char *option){
     option[0] -= '0';
 }
 
+void debuggerShowMap(Map *map){
+    for(int i = 0; i < MAP_SIZE; i++){
+        printf("Coluna %d: ", i);
+        for(int j = 0; j < MAP_SIZE; j++){
+            int character = map->collumns[i].mojis[j];
+            printf(" %c", character == '\0' ? ' ' : character);
+        }
+        printf("\n");
+    }
+}
+
 void showMap(Map *map) {
     clearScreen();
     printf("\n\n");
