@@ -128,6 +128,15 @@ bool isValidSwap(Map *map, int lenMojis) {
         return 0;
     }
 
+    if(
+        map->collumns[map->output].len != 0 && 
+        map->collumns[map->output].mojis[MAP_SIZE - map->collumns[map->output].len] != 
+            map->collumns[map->input].mojis[MAP_SIZE - map->collumns[map->input].len]
+    ) {
+        printf("A troca não é possível, pois o moji da coluna de origem é diferente do moji da coluna de destino.\n");
+        return 0;
+    }
+
     return 1;
 }
 
