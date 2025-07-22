@@ -34,6 +34,8 @@
         int output;
         int maxHeight;
         int lenCollumns;
+        int totalCompleteColumns;
+        int lenVoidCollumns;
     } Map;
 
 #endif

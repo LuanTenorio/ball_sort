@@ -15,18 +15,26 @@ void getMapSize(Map *map) {
     
     FILE *file = fopen("entrada.txt", "r");
     char c[2];
+    int totMojis = 0;
     
     while(fgets(c, 2, file)){
         int height = c[0] - '0';
 
-        if(c[0] == '\n' || height < 0 || height > 10) continue;
+        if(c[0] == '\n') continue;
+
+        if(height < 0 || height > 10){
+            totMojis++;
+            continue;
+        }
 
         map->lenCollumns++;
 
         if(height > map->maxHeight)
             map->maxHeight = height;
     }
-    
+
+    map->lenVoidCollumns = (map->lenCollumns * map->maxHeight - totMojis) / map->maxHeight;
+
     fclose(file);
 }
 
@@ -177,7 +185,7 @@ bool isValidSwap(Map *map, int lenMojis) {
     return true;
 }
 
-bool checkColumnCompletion(Map *map, int column) {
+bool checkColumnCompletion(Map *map) {
     char moji = map->collumns[map->output].mojis[0];
 
     if (moji == '\0' || map->collumns[map->output].len != map->maxHeight) {
@@ -194,28 +202,44 @@ bool checkColumnCompletion(Map *map, int column) {
     }
 
     if(!diffMoji){
+        showMap(map);
         printf("PARABENS, VOCE FECHOU A COLUNA %d\n", map->output);
         map->collumns[map->output].complete = true;
+        map->totalCompleteColumns++;
         pressEnterToContinue();
+
+        return true;
     }
+
+    return false;
 }
 
-void swapMojis(Map *map) {
+bool swapMojis(Map *map) {
     char selectedMoji = map->collumns[map->input].mojis[map->maxHeight - map->collumns[map->input].len]; // Moji selecionado para troca
     int lenMojis = getLenMojisFromInputColumn(map, selectedMoji);
+    bool swapToVoidOut = map->collumns[map->output].len == 0;
     
     // Verifica se a troca é válida
     if(!isValidSwap(map, lenMojis)) {
         pressEnterToContinue();
-        return;
+        return false;
     }
     
     // Coloca os mojis selecionados na coluna de output
     removeMojisFromInputColumn(map, &lenMojis, selectedMoji);
     putMojisInOutputColumn(map, lenMojis, selectedMoji);
+
+    if(!swapToVoidOut) 
+        return checkColumnCompletion(map);
+
+    return false; // Se a coluna de output estava vazia, não precisa verificar se completou
 }
 
-void startGame(){
+bool checkToWin(Map *map){
+    return map->totalCompleteColumns == map->lenCollumns - map->lenVoidCollumns;
+}
+
+bool startGame(){
     int interactions = 0;
     Map map = {0};
     
@@ -225,15 +249,23 @@ void startGame(){
     
     while(1){
         showMap(&map);
-        if(interactions != 0) {
-            checkColumnCompletion(&map, map.output);
-        }
 
         if(!play(&map)) continue; // Se a jogada for invalida, joga denovo
 
         interactions++;
-        swapMojis(&map);
+        bool closedColumn = swapMojis(&map);
+
+        if(closedColumn && checkToWin(&map)) {
+            printf("PARABENS!!! VOCE VENCEU EM %d RODADAS!\n", interactions);
+            printf("PARABENS!!! VOCE VENCEU EM %d RODADAS!\n", interactions);
+            printf("PARABENS!!! VOCE VENCEU EM %d RODADAS!\n", interactions);
+            printf("PARABENS!!! VOCE VENCEU EM %d RODADAS!\n", interactions);
+            pressEnterToContinue();
+            break;
+        }
     }
 
     freeMap(&map);
+
+    return true;
 }
