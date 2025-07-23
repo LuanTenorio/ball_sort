@@ -38,4 +38,9 @@
         int lenVoidCollumns;
     } Map;
 
+    typedef struct Maps{
+        Map *maps;
+        int count;
+    } Maps;
+
 #endif

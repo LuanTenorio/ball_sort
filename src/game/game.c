@@ -1,130 +1,12 @@
 #include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
 #include "../ui/ui.h"
 #include "../config.h"
 
-int countMapsInFile(FILE *file) {
-    int mapCount = 0;
-    int ch;
-    
-    while ((ch = fgetc(file)) != EOF)
-        if (ch == '-') 
-            mapCount++;
-
-    // Conta o ultimo mapa
-    if(!isspace(ch)) 
-        mapCount++;
-
-    return mapCount;
-}
-
-void setMapDimensions(Map *map, FILE *file) {
-    char ch;
-    int totMojis = 0;
-
-    while ((ch = fgetc(file)) != EOF && ch != '-') {
-        if (isspace(ch)) continue;
-
-        if (!isdigit(ch)) {
-            totMojis++;
-            continue;
-        }
-
-        int height = ch - '0';
-        map->lenCollumns++;
-
-        if (height > map->maxHeight) {
-            map->maxHeight = height;
-        }
-    }
-
-    map->lenVoidCollumns = (map->lenCollumns * map->maxHeight - totMojis) / map->maxHeight;
-}
-
-void setMap(Map *map, FILE *file) {
-    int lenColumn = 0;
-    int curColumn = -1;
-    int floor;
-    char ch;
-
-    // Coloca os mojis no mapa
-    while ((ch = fgetc(file)) != EOF && ch != '-' && ch != '}') {
-        if (isspace(ch)) continue;
-
-        if(lenColumn--){
-            map->collumns[curColumn].mojis[lenColumn + floor] = ch;
-            continue;
-        }
-
-        // Presume-se que sempre vai ser um digito caso o mapa esteja correto
-        curColumn++;
-        lenColumn = ch - '0';
-        floor = map->maxHeight - lenColumn;
-
-        map->collumns[curColumn].mojis = malloc(sizeof(char) * map->maxHeight);
-        map->collumns[curColumn].len = lenColumn;
-        map->collumns[curColumn].complete = false;
-    }
-
-    map->lenCollumns = curColumn + 1;
-}
-
-void readMap(Map *map, FILE *file) {
-    *map = (Map){0};
-    int mapStartPosition = ftell(file);
-    int totMojis = 0;
-
-    setMapDimensions(map, file);
-
-    // Vai pro começo do mapa
-    fseek(file, mapStartPosition, SEEK_SET);
-
-    map->collumns = malloc(sizeof(Collumn) * map->lenCollumns);
-
-    setMap(map, file);
-}
-
-void readMaps(Map *maps, int mapCount, FILE *file){
-    for (int i = 0; i < mapCount; i++) 
-        readMap(&maps[i], file);
-}
-
-Map* loadAllMaps(const char* filename, int* mapCount) {
-    FILE* file = fopen(filename, "r");
-
-    if (file == NULL) {
-        printf("Arquivo de entrada '%s' não encontrado.\n", filename);
-        exit(1);
-    }
-
-    *mapCount = countMapsInFile(file);
-    
-    if (*mapCount == 0) {
-        fclose(file);
-        return NULL;
-    }
-
-    Map* maps = malloc(sizeof(Map) * (*mapCount));
-
-    // Volta para o começo do mapa
-    fseek(file, 0, SEEK_SET);
-
-    // Lê os mapas do arquivo
-    readMaps(maps, *mapCount, file);
-    fclose(file);
-
-    return maps;
-}
-
-
 // Melhorar tratamento de erros
 bool play(Map *map) {
     printf("Informe a coluna de origem (0-%d): ", map->lenCollumns - 1);
-
+    
     char inputChar, outputChar;
 
     scanf(" %c", &inputChar);
@@ -144,7 +26,7 @@ bool play(Map *map) {
 
     numChar = outputChar - '0';
 
-    if(numChar < 0 || numChar >= map->lenCollumns || numChar == inputChar - '0') {
+    if(numChar < 0 || numChar >= map->lenCollumns || outputChar == inputChar) {
         printf("Coluna invalida, tente novamente.\n");
         pressEnterToContinue();
         return false;
