@@ -2,98 +2,124 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "../ui/ui.h"
 #include "../config.h"
 
-void getMapSize(Map *map) {
-    if(access("entrada.txt", F_OK)) {
-        printf("Arquivo de entrada não encontrado.\n");
-        exit(1);
-        return;
-    }
+int countMapsInFile(FILE *file) {
+    int mapCount = 0;
+    int ch;
     
-    FILE *file = fopen("entrada.txt", "r");
-    char c[2];
+    while ((ch = fgetc(file)) != EOF)
+        if (ch == '-') 
+            mapCount++;
+
+    // Conta o ultimo mapa
+    if(!isspace(ch)) 
+        mapCount++;
+
+    return mapCount;
+}
+
+void setMapDimensions(Map *map, FILE *file) {
+    char ch;
     int totMojis = 0;
-    
-    while(fgets(c, 2, file)){
-        int height = c[0] - '0';
 
-        if(c[0] == '\n') continue;
+    while ((ch = fgetc(file)) != EOF && ch != '-') {
+        if (isspace(ch)) continue;
 
-        if(height < 0 || height > 10){
+        if (!isdigit(ch)) {
             totMojis++;
             continue;
         }
 
+        int height = ch - '0';
         map->lenCollumns++;
 
-        if(height > map->maxHeight)
+        if (height > map->maxHeight) {
             map->maxHeight = height;
+        }
     }
 
     map->lenVoidCollumns = (map->lenCollumns * map->maxHeight - totMojis) / map->maxHeight;
-
-    fclose(file);
 }
 
-void freeMap(Map *map) {
-    for(int i = 0; i < map->lenCollumns; i++) {
-        free(map->collumns[i].mojis);
-    }
-
-    free(map->collumns);
-    map->collumns = NULL;
-}
-
-void convertMapToArray(Map *map) {
-    if(access("entrada.txt", F_OK)) {
-        printf("Arquivo de entrada não encontrado.\n");
-        exit(1);
-        return;
-    }
-    
-    FILE *file = fopen("entrada.txt", "r");
-    map->collumns = realloc(map->collumns, sizeof(Collumn) * map->lenCollumns);
-    char c[2];
+void setMap(Map *map, FILE *file) {
     int lenColumn = 0;
     int curColumn = -1;
-    int floor = 0;
-    
-    while(fgets(c, 2, file)){
-        if(c[0] == '\n') continue;
+    int floor;
+    char ch;
 
-        // Preenche o mapa
+    // Coloca os mojis no mapa
+    while ((ch = fgetc(file)) != EOF && ch != '-' && ch != '}') {
+        if (isspace(ch)) continue;
+
         if(lenColumn--){
-            map->collumns[curColumn].mojis[lenColumn + floor] = c[0];
+            map->collumns[curColumn].mojis[lenColumn + floor] = ch;
             continue;
         }
 
-        // Verifica as linhas e colunas
-        int numberOfLines = c[0] - '0';
-        int isNumber = numberOfLines >= 0 && numberOfLines <= map->maxHeight;
-        floor = map->maxHeight - numberOfLines;
+        // Presume-se que sempre vai ser um digito caso o mapa esteja correto
+        curColumn++;
+        lenColumn = ch - '0';
+        floor = map->maxHeight - lenColumn;
 
-        // Seleciona a quantidade de colunas
-        if(isNumber){
-            lenColumn = numberOfLines;
-            curColumn++;
-        }else{
-            printf("Arquivo está em um formato inválido.\n");
-            exit(1);
-        }
-        
-        // Coloca o valor inicial da coluna
         map->collumns[curColumn].mojis = malloc(sizeof(char) * map->maxHeight);
-        map->collumns[curColumn].len = numberOfLines;
-        map->collumns[curColumn].complete = 0;
+        map->collumns[curColumn].len = lenColumn;
+        map->collumns[curColumn].complete = false;
     }
 
     map->lenCollumns = curColumn + 1;
-
-    fclose(file);
 }
+
+void readMap(Map *map, FILE *file) {
+    *map = (Map){0};
+    int mapStartPosition = ftell(file);
+    int totMojis = 0;
+
+    setMapDimensions(map, file);
+
+    // Vai pro começo do mapa
+    fseek(file, mapStartPosition, SEEK_SET);
+
+    map->collumns = malloc(sizeof(Collumn) * map->lenCollumns);
+
+    setMap(map, file);
+}
+
+void readMaps(Map *maps, int mapCount, FILE *file){
+    for (int i = 0; i < mapCount; i++) 
+        readMap(&maps[i], file);
+}
+
+Map* loadAllMaps(const char* filename, int* mapCount) {
+    FILE* file = fopen(filename, "r");
+
+    if (file == NULL) {
+        printf("Arquivo de entrada '%s' não encontrado.\n", filename);
+        exit(1);
+    }
+
+    *mapCount = countMapsInFile(file);
+    
+    if (*mapCount == 0) {
+        fclose(file);
+        return NULL;
+    }
+
+    Map* maps = malloc(sizeof(Map) * (*mapCount));
+
+    // Volta para o começo do mapa
+    fseek(file, 0, SEEK_SET);
+
+    // Lê os mapas do arquivo
+    readMaps(maps, *mapCount, file);
+    fclose(file);
+
+    return maps;
+}
+
 
 // Melhorar tratamento de erros
 bool play(Map *map) {
@@ -239,33 +265,24 @@ bool checkToWin(Map *map){
     return map->totalCompleteColumns == map->lenCollumns - map->lenVoidCollumns;
 }
 
-bool startGame(){
-    int interactions = 0;
-    Map map = {0};
-    
-    getMapSize(&map);
+bool startGame(Map *map) {
 
-    convertMapToArray(&map);
-    
     while(1){
-        showMap(&map);
+        showMap(map);
 
-        if(!play(&map)) continue; // Se a jogada for invalida, joga denovo
+        if(!play(map)) continue; // Se a jogada for invalida, joga denovo
 
-        interactions++;
-        bool closedColumn = swapMojis(&map);
+        bool closedColumn = swapMojis(map);
 
-        if(closedColumn && checkToWin(&map)) {
-            printf("PARABENS!!! VOCE VENCEU EM %d RODADAS!\n", interactions);
-            printf("PARABENS!!! VOCE VENCEU EM %d RODADAS!\n", interactions);
-            printf("PARABENS!!! VOCE VENCEU EM %d RODADAS!\n", interactions);
-            printf("PARABENS!!! VOCE VENCEU EM %d RODADAS!\n", interactions);
+        if(closedColumn && checkToWin(map)) {
+            printf("PARABENS!!! VOCE VENCEU!!!\n");
+            printf("PARABENS!!! VOCE VENCEU!!!\n");
+            printf("PARABENS!!! VOCE VENCEU!!!\n");
+            printf("PARABENS!!! VOCE VENCEU!!!\n");
             pressEnterToContinue();
             break;
         }
     }
-
-    freeMap(&map);
 
     return true;
 }

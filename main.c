@@ -6,11 +6,14 @@
 
 void loopGame() {
     char option;
+    int numMaps;
+    Map *maps = loadAllMaps("entrada.txt", &numMaps);
+
     while(option != MENU_SAIR) {
         showMenu(&option);
         switch (option){
             case MENU_JOGAR:
-                startGame();
+                startGame(&maps[0]);
                 break;
             case MENU_CONFIGURACOES:
                 break;
