@@ -95,25 +95,37 @@ Maps *loadAllMaps(const char* filename) {
     }
 
     Maps *maps = malloc(sizeof(Maps));
-    maps->count = countMapsInFile(file);
+    maps->len = countMapsInFile(file);
 
-    if (!maps->count) {
+    if (!maps->len) {
         printf("Nenhum mapa encontrado no arquivo '%s'.\n", filename);
         free(maps);
         fclose(file);
         exit(1);
     }
 
-   maps->maps = malloc(sizeof(Map) * maps->count);
+   maps->maps = malloc(sizeof(Map) * maps->len);
 
     // Volta para o começo do mapa
     fseek(file, 0, SEEK_SET);
 
     // Lê os mapas do arquivo
-    for (int i = 0; i < maps->count; i++) 
+    for (int i = 0; i < maps->len; i++) 
         readMap(&maps->maps[i], file);
 
     fclose(file);
 
     return maps;
+}
+
+void freeMaps(Maps *maps) {
+    for (int i = 0; i < maps->len; i++) {
+        for (int j = 0; j < maps->maps[i].lenCollumns; j++) {
+            free(maps->maps[i].collumns[j].mojis);
+        }
+        free(maps->maps[i].collumns);
+    }
+    
+    free(maps->maps);
+    free(maps);
 }

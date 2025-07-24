@@ -168,3 +168,12 @@ bool startGame(Map *map) {
 
     return true;
 }
+
+void playGame(Maps *maps, int *curLevel) {
+    while(1) {
+        int win = startGame(&maps->maps[*curLevel-1]);
+        (*curLevel)++;
+
+        if(*curLevel > maps->len || (win && !nextLevel())) break;
+    }
+}

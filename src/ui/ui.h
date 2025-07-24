@@ -12,5 +12,7 @@
     void pressEnterToContinue();
     void debuggerShowMap(Map *map);
     void showColumn(int column, Map *map);
+    bool nextLevel();
+    void showRanking(Player *players, int numJogadores);
 
 #endif 

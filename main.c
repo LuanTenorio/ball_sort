@@ -4,30 +4,41 @@
 #include "./src/config.h"
 #include "./src/game/game.h"
 #include "./src/game/map.h"
+#include "./src/ranking/ranking.h"
 
-void loopGame() {
+int loopGame() {
     char option;
     Maps *maps = loadAllMaps("entrada.txt");
+    int curLevel = 1;
 
     while(option != MENU_SAIR) {
         showMenu(&option);
         switch (option){
             case MENU_JOGAR:
-                startGame(&maps->maps[0]);
+                playGame(maps, &curLevel);
                 break;
             case MENU_CONFIGURACOES:
                 break;
             case MENU_INSTRUCOES:
                 break;
             case MENU_RANKING:
+                readRanking();
+                pressEnterToContinue();
                 break;
         }
     }
+
+    freeMaps(maps);
+    return curLevel * (curLevel + 1) / 2;
 }
 
 int main(){
-    char nickname[21]; // Não faz nada ainda
-    showWelcome(nickname);
-    loopGame();
+    Player player = {0};
+    
+    showWelcome(player.nickname);
+    
+    player.score = loopGame();
+    pushPlayer(&player);
+
     return 0;
 }

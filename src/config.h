@@ -40,7 +40,14 @@
 
     typedef struct Maps{
         Map *maps;
-        int count;
+        int len;
     } Maps;
+
+// RANKING
+
+    typedef struct Player{
+        char nickname[20];
+        int score;
+    } Player;
 
 #endif

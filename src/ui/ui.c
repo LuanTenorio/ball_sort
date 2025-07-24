@@ -24,6 +24,16 @@ void enterOption(char *n){
     clearScreen();
 }
 
+bool nextLevel() {
+    clearScreen();
+    printf("Deseja passar para o próximo nível? (s/n): ");
+
+    char n;
+    scanf(" %c", &n);
+
+    return n == 's' || n == 'S';
+}
+
 void pressEnterToContinue(){
     printf("Pressione Enter para continuar...");
     while(getchar() != '\n');
@@ -94,4 +104,13 @@ void showMap(Map *map) {
         printf(" %d |", i);
 
     printf("\n\n");
+}
+
+void showRanking(Player *players, int numJogadores){
+    printf("\n----------------RANKING------------------\n");
+
+    for (int i = 0; i < numJogadores; i++) 
+        printf("%d - Nome: %-20s | Score: %d\n", i + 1, players[i].nickname, players[i].score);
+    
+    printf("-----------------------------------------\n\n");
 }
