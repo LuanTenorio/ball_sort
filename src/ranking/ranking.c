@@ -62,3 +62,47 @@ void readRanking() {
     qsort(players, numPlayers, sizeof(Player), compScores);
     showRanking(players, numPlayers);
 }
+
+void zerarRanking() {
+    char confirm;
+    printf("Tem certeza que deseja zerar o ranking? (s/n): ");
+    scanf(" %c", &confirm);
+
+    if(confirm != 's' && confirm != 'S') 
+        return;
+
+    FILE *file = fopen("ranking.bin", "wb");
+
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo de ranking");
+        exit(1);
+    }
+
+    printf("Ranking zerado!\n");
+
+    fclose(file);
+}
+
+void openConfig(){
+    while(1) {
+        clearScreen();
+        showConfig();
+        char option;
+        enterOption(&option);
+        option -= '0';
+
+        switch (option) {
+            case CONFIG_ZERAR_RANKING:
+                zerarRanking();
+                break;
+            case CONFIG_MODO_BLIND:
+                printf("Modo Blind não implementado\n");
+                break;
+            case CONFIG_EDITOR_FASES:
+                printf("Editor de Fases não implementado\n");
+                break;
+            case CONFIG_VOLTAR_MENU:
+                return;
+        }
+    }
+}

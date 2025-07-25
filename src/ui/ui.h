@@ -14,5 +14,6 @@
     void showColumn(int column, Map *map);
     bool nextLevel();
     void showRanking(Player *players, int numJogadores);
+    void showConfig();
 
 #endif 

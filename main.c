@@ -18,6 +18,7 @@ int loopGame() {
                 playGame(maps, &curLevel);
                 break;
             case MENU_CONFIGURACOES:
+                openConfig();
                 break;
             case MENU_INSTRUCOES:
                 break;

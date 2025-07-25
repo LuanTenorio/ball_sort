@@ -114,3 +114,13 @@ void showRanking(Player *players, int numJogadores){
     
     printf("-----------------------------------------\n\n");
 }
+
+void showConfig(){
+    printf("=======================================\n");
+    printf("             Configurações             \n");
+    printf("=======================================\n\n");
+    printf("1 - Zerar Ranking\n");
+    printf("2 - Modo Blind (não implementado)\n");
+    printf("3 - Editor de Fases (não implementado)\n");
+    printf("4 - Voltar ao Menu Principal\n\n");
+}

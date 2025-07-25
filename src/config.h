@@ -12,6 +12,12 @@
     #define MENU_RANKING 4
     #define MENU_SAIR 5
 
+    // Configurações
+    #define CONFIG_ZERAR_RANKING 1
+    #define CONFIG_MODO_BLIND 2
+    #define CONFIG_EDITOR_FASES 3
+    #define CONFIG_VOLTAR_MENU 4
+
     // Limpar tela
     #ifdef _WIN32
         #define CLEAR_SCREEN_CMD "cls"

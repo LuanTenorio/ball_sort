@@ -5,5 +5,6 @@
 
     void pushPlayer(Player *player);
     void readRanking();
+    void openConfig();
 
 #endif
