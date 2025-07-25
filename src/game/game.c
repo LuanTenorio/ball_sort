@@ -174,10 +174,23 @@ bool startGame(Map *map) {
 }
 
 void playGame(Maps *maps, int *curLevel) {
+    if(*curLevel > maps->len) {
+        printf("Todos os níveis já foram concluídos.\n");
+        pressEnterToContinue();
+        return;
+    }
+
     while(1) {
         int win = startGame(&maps->maps[*curLevel-1]);
         (*curLevel)++;
 
-        if(*curLevel > maps->len || (win && !nextLevel())) break;
+        
+        if(*curLevel > maps->len){
+            printf("Parabens, você completou o jogo!\n");
+            pressEnterToContinue();
+            break;
+        };
+
+        if((win && !nextLevel())) break;
     }
 }

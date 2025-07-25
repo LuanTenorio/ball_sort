@@ -124,3 +124,37 @@ void showConfig(){
     printf("3 - Editor de Fases (não implementado)\n");
     printf("4 - Voltar ao Menu Principal\n\n");
 }
+
+void showInstructions(){
+    printf("*** INSTRUCOES SOBRE O ORDERMOJI  ***\n\n");
+
+    printf("Bem-vindo ao OrderMoji! O seu desafio é organizar os simbolos em colunas.\n\n");
+
+    printf(">> OBJETIVO DO JOGO:\n");
+    printf("O objetivo principal é ordenar todos os itens (representados por caracteres como '#', '@', '*', etc.) de forma que cada coluna contenha apenas simbolos iguais.\n");
+    printf("Uma coluna é considerada 'fechada' ou completa quando está totalmente preenchida com itens idênticos.\n");
+    printf("O jogo é vencido quando todas as colunas possíveis estiverem completas.\n\n");
+
+    printf(">> COMO JOGAR:\n");
+    printf("1. Na sua vez, você será solicitado a informar a 'coluna de origem' e a 'coluna de destino'.\n");
+    printf("2. As colunas são numeradas, e você deve digitar o número correspondente para fazer sua jogada.\n\n");
+
+    printf(">> REGRAS PARA MOVIMENTOS:\n");
+    printf("Para que um movimento seja válido, as seguintes condições devem ser respeitadas:\n");
+    printf("- So é possivel mover o item que está no topo de uma coluna.\n");
+    printf("- Um item so pode ser movido para uma coluna de destino que esteja vazia ou cujo item no topo seja idêntico ao item que está sendo movido.\n");
+    printf("- Uma coluna de destino não pode receber mais itens do que sua capacidade máxima.\n");
+    printf("- Ao mover um item, todos os outros itens iguais e adjacentes no topo da coluna de origem serão movidos juntos, desde que haja espaço na coluna de destino.\n");
+    printf("- Se uma jogada for inválida, uma mensagem será exibida.\n\n");
+
+    printf(">> FASES E EVOLUCAO:\n");
+    printf("O jogo é dividido em fases, carregadas de um arquivo. \n");
+    printf("O jogo termina quando todas as fases do arquivo forem concluídas.\n\n");
+
+    printf(">> PONTUACAO:\n");
+    printf("Sua pontuação é a soma de todos os níveis que você alcançou.\n");
+    printf("A cada fase concluída com sucesso, seu nível aumenta.\n");
+    printf("Ao final da partida (seja por concluir todas as fases ou por sair antes), sua pontuação e seu nickname serão salvos no ranking.\n\n");
+
+    pressEnterToContinue();
+}

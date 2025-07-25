@@ -15,5 +15,6 @@
     bool nextLevel();
     void showRanking(Player *players, int numJogadores);
     void showConfig();
+    void showInstructions();
 
 #endif 

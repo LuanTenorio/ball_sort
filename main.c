@@ -21,6 +21,7 @@ int loopGame() {
                 openConfig();
                 break;
             case MENU_INSTRUCOES:
+                showInstructions();
                 break;
             case MENU_RANKING:
                 readRanking();
