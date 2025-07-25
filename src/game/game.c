@@ -37,22 +37,26 @@ bool play(Map *map) {
     return true;
 }
 
-void removeMojisFromInputColumn(Map *map, int *lenMojis, char selectedMoji) {
-    for (int i = map->maxHeight - map->collumns[map->input].len; i < map->maxHeight; i++){
-        // Se o moji for diferente do selecionado, sai do for
-        if(map->collumns[map->input].mojis[i] != selectedMoji) break;
+void removeMojisFromInputColumn(Map *map, int lenMojis, char selectedMoji) {
+    int mojiIndex = map->maxHeight - map->collumns[map->input].len;
 
+    for (int i = 0; i < lenMojis; i++){
         // Limpa o moji selecionado
-        map->collumns[map->input].mojis[i] = '\0';
+        map->collumns[map->input].mojis[mojiIndex] = '\0';
+        mojiIndex++;
     }
 
-    map->collumns[map->input].len -= *lenMojis;
+    map->collumns[map->input].len -= lenMojis;
 }
 
 int getLenMojisFromInputColumn(Map *map, char selectedMoji) {
     int lenMojis = 0;
+
     for (int i = map->maxHeight - map->collumns[map->input].len; i < map->maxHeight; i++){
-        if(map->collumns[map->input].mojis[i] != selectedMoji) break;
+        if(
+            map->collumns[map->input].mojis[i] != selectedMoji || 
+            lenMojis == map->maxHeight - map->collumns[map->output].len
+        ) break;
         
         lenMojis++;
     }
@@ -134,7 +138,7 @@ bool swapMojis(Map *map) {
     }
     
     // Coloca os mojis selecionados na coluna de output
-    removeMojisFromInputColumn(map, &lenMojis, selectedMoji);
+    removeMojisFromInputColumn(map, lenMojis, selectedMoji);
     putMojisInOutputColumn(map, lenMojis, selectedMoji);
 
     if(!swapToVoidOut) 
