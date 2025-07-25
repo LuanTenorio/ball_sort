@@ -38,6 +38,11 @@ void setMapDimensions(Map *map, FILE *file) {
             map->maxHeight = height;
         }
     }
+    
+    if(!totMojis){
+        printf("Mapa vazio ou inválido, verifique o arquivo de entrada.\n");
+        exit(1);
+    }
 
     map->lenVoidCollumns = (map->lenCollumns * map->maxHeight - totMojis) / map->maxHeight;
 }
